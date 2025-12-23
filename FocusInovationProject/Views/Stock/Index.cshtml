@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Stoklar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<h3 class="mb-3">Stok Listesi</h3>
+
+<div id="stockGrid"></div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#stockGrid").dxDataGrid({
+                dataSource: DevExpress.data.AspNet.createStore({
+                    key: "id",
+                    loadUrl: "/Stock/GetStocks"
+                }),
+                showBorders: true,
+                rowAlternationEnabled: true,
+                paging: { pageSize: 10 },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                columns: [
+                    { dataField: "product.name", caption: "Ürün Adı" },
+                    { dataField: "quantity", caption: "Miktar", dataType: "number" },
+                    { dataField: "date", caption: "Tarih", dataType: "date" },
+                    {
+                        caption: "Aksiyon",
+                        type: "buttons",
+                        width: 120,
+                        buttons: [
+                            {
+                                hint: "Düzenle",
+                                icon: "edit",
+                                onClick: function(e) {
+                                    window.location.href = '/Stock/UpdateStock/' + e.row.data.id;
+                                }
+                            },
+                            {
+                                hint: "Sil",
+                                icon: "trash",
+                                onClick: function(e) {
+                                    if (confirm("Bu stoğu silmek istediğinizden emin misiniz?")) {
+                                        $.post('/Stock/DeleteStock', { id: e.row.data.id }, function() {
+                                            $("#stockGrid").dxDataGrid("instance").refresh();
+                                        });
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+        });
+    </script>
+}

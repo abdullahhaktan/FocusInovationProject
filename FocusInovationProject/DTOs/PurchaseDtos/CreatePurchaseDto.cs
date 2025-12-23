@@ -1,0 +1,22 @@
+﻿using FocusInovationProject.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace FocusInovationProject.DTOs.PurchaseDtos
+{
+    public class CreatePurchaseDto
+    {
+        public int ID { get; set; }
+        public double? QUANTITY { get; set; }
+        public double? PRICE { get; set; }
+        public double? AMOUNT { get; set; }
+        public DateTime DATE { get; set; }
+
+
+        [Column("CUSTOMER_ID")]
+        public int? CUSTOMER_ID { get; set; }
+
+        [Column("PRODUCT_ID")]
+        public int? PRODUCT_ID { get; set; }
+
+    }
+}

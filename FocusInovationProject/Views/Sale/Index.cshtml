@@ -1,0 +1,122 @@
+﻿@{
+    ViewData["Title"] = "Satışlar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<h3 class="mb-3">Satış Listesi</h3>
+
+<a href="/Sale/CreateSale" class="btn btn-outline-info">Yeni Satış İşlemi</a>
+
+<div id="saleGrid"></div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#saleGrid").dxDataGrid({
+                dataSource: DevExpress.data.AspNet.createStore({
+                    key: "id",
+                    loadUrl: "/Sale/GetSales"
+                }),
+                showBorders: true,
+                rowAlternationEnabled: true,
+                paging: { pageSize: 10 },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                columns: [
+                    { dataField: "product.name", caption: "Ürün Adı" },
+                    {
+                        caption: "Müşteri",
+                        calculateCellValue: function(data) {
+                            // customertitle ve customernumber'ı birleştiriyoruz
+                            return data.customer.customertitle + " (" + data.customer.customernumber + ")";
+                        }
+                    },
+                    {
+                        dataField: "listprice",
+                        caption: "Liste Fiyatı",
+                        dataType: "number",
+                        format: { type: "currency", precision: 2 }
+                    },
+                    {
+                        dataField: "salesprice",
+                        caption: "Satış Fiyatı",
+                        dataType: "number",
+                        format: { type: "currency", precision: 2 }
+                    },
+                    {
+                        dataField: "discountrate",
+                        caption: "İskonto (%)",
+                        dataType: "number",
+                        format: { type: "fixedPoint", precision: 2 }
+                    },
+                    {
+                        caption: "Aksiyon",
+                        type: "buttons",
+                        width: 120,
+                        buttons: [
+                            {
+                                hint: "Düzenle",
+                                icon: "edit",
+                                onClick: function(e) {
+                                    window.location.href = '/Sale/UpdateSale/' + e.row.data.id;
+                                }
+                            },
+                            {
+                                hint: "Sil",
+                                icon: "trash",
+                                onClick: function(e) {
+                                    if (confirm("Bu satışı silmek istediğinizden emin misiniz?")) {
+                                        $.post('/Sale/DeleteSale', { id: e.row.data.id }, function() {
+                                            $("#saleGrid").dxDataGrid("instance").refresh();
+                                        });
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                onCellClick: function(e) {
+                    const rowData = e.row.data;
+                    if (!rowData) return;
+
+                    if (e.column.dataField === "listprice") {
+                        $.ajax({
+                            url: '/Sale/UpdateListPrice',
+                            type: 'POST',
+                            data: { id: rowData.id },
+                            success: function(updatedPrice) {
+                                e.component.cellValue(e.row.rowIndex, "listprice", updatedPrice);
+                                DevExpress.ui.notify("Liste fiyatı güncellendi.", "success", 1500);
+                            },
+                            error: function() {
+                                DevExpress.ui.notify("Liste fiyatı güncelleme hatası!", "error", 2000);
+                            }
+                        });
+                    }
+                    else if (e.column.dataField === "salesprice") {
+                        const newSalesPrice = parseFloat(prompt("Yeni satış fiyatını girin:", rowData.salesprice));
+                        if (isNaN(newSalesPrice)) return;
+
+                        $.ajax({
+                            url: '/Sale/UpdateSalesPrice',
+                            type: 'POST',
+                            data: {
+                                id: rowData.id,
+                                salesPrice: newSalesPrice
+                            },
+                            success: function(updated) {
+                                e.component.cellValue(e.row.rowIndex, "salesprice", updated.salesPrice);
+                                e.component.cellValue(e.row.rowIndex, "discountrate", updated.discountRate.toFixed(2));
+                                DevExpress.ui.notify("Satış fiyatı ve iskonto güncellendi.", "success", 1500);
+                            },
+                            error: function() {
+                                DevExpress.ui.notify("Güncelleme hatası!", "error", 2000);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+}

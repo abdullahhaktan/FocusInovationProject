@@ -1,0 +1,39 @@
+﻿@model CreateStockDto
+
+@{
+    ViewData["Title"] = "CreateStock";
+}
+
+<div class="card shadow border-0">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0">✏️ Yeni Ürün Ekle</h5>
+    </div>
+
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="QUANTITY" class="form-label fw-semibold" >Miktar</label>
+                <input asp-for="QUANTITY" class="form-control" type="number" />
+            </div>
+
+
+            <div class="mb-3">
+                <label asp-for="DATE" class="form-label fw-semibold">Satış Tarihi</label>
+                <input asp-for="DATE" type="date" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="PRODUCT_ID" class="form-label fw-semibold">Kategori</label>
+                <select asp-for="PRODUCT_ID" class="form-control" asp-items="@ViewBag.products">
+                    <option selected disabled>
+                        Ürün Seçiniz
+                    </option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save"></i> Kaydet
+            </button>
+        </form>
+    </div>
+</div>

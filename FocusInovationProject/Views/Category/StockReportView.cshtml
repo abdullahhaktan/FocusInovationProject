@@ -1,0 +1,77 @@
+﻿@{
+    ViewData["Title"] = "Ürün Stok Raporu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="container-fluid">
+    <div class="row align-items-center mb-4 mt-2">
+        <div class="col-md-6">
+            <h3 class="font-weight-bold">Ürün Toplam Stok Raporu</h3>
+        </div>
+        <div class="col-md-6 text-right">
+            <div id="refreshButton"></div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div id="stockReportGrid"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            // 1. DataGrid Tanımı
+            var gridInstance = $("#stockReportGrid").dxDataGrid({
+                dataSource: DevExpress.data.AspNet.createStore({
+                    key: "productName",
+                    loadUrl: "/Category/GetStockReportData"
+                }),
+                showBorders: true,
+                rowAlternationEnabled: true,
+                columnAutoWidth: true,
+                loadPanel: { enabled: true },
+                searchPanel: { visible: true, width: 250, placeholder: "Ürün Ara..." },
+                headerFilter: { visible: true },
+                columns: [
+                    {
+                        dataField: "productName",
+                        caption: "Ürün Adı",
+                        sortOrder: "asc"
+                    },
+                    {
+                        dataField: "totalStock",
+                        caption: "Mevcut Stok Miktarı",
+                        dataType: "number",
+                        alignment: "right",
+                        format: {
+                            type: "fixedPoint",
+                            precision: 0
+                        }
+                    }
+                ],
+                summary: {
+                    totalItems: [{
+                        column: "totalStock",
+                        summaryType: "sum",
+                        displayFormat: "Toplam Stok: {0}",
+                        valueFormat: { type: "fixedPoint", precision: 0 }
+                    }]
+                }
+            }).dxDataGrid("instance");
+
+            // 2. Yenileme Butonu
+            $("#refreshButton").dxButton({
+                text: "Raporu Yenile",
+                type: "default",
+                icon: "refresh",
+                onClick: function() {
+                    gridInstance.refresh();
+                }
+            });
+        });
+    </script>
+}

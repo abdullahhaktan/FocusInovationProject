@@ -1,0 +1,136 @@
+﻿@{
+    ViewData["Title"] = "Alımlar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 class="mb-3">Alım Listesi</h3>
+
+<a href="/Purchase/CreatePurchase" class="btn btn-outline-info">Yeni Satın Alma İşlemi</a>
+
+<div id="purchaseGrid"></div>
+
+
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#purchaseGrid").dxDataGrid({
+                dataSource: DevExpress.data.AspNet.createStore({
+                    key: "id",
+                    loadUrl: "/Purchase/GetPurchases"
+                }),
+                showBorders: true,
+                rowAlternationEnabled: true,
+                paging: { pageSize: 10 },
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+                columns: [
+                    { dataField: "product.name", caption: "Ürün Adı" },
+                    {
+                        caption: "Müşteri",
+                        calculateCellValue: function(data) {
+                            if (!data.customer) return "";
+                            return data.customer.customertitle + " (" + data.customer.customernumber + ")";
+                        }
+                    },
+                    {
+                        dataField: "price",
+                        caption: "Birim Fiyat",
+                        dataType: "number",
+                        format: { type: "currency", precision: 2 }
+                    },
+                    {
+                        dataField: "quantity",
+                        caption: "Miktar",
+                        dataType: "number",
+                        format: { type: "fixedPoint", precision: 2 }
+                    },
+                    {
+                        dataField: "amount",
+                        caption: "Tutar",
+                        dataType: "number",
+                        format: { type: "currency", precision: 2 }
+                    },
+                    {
+                        dataField: "date",
+                        caption: "Tarih",
+                        dataType: "date",
+                        format: "dd/MM/yyyy"
+                    },
+                    {
+                        caption: "Aksiyon",
+                        type: "buttons",
+                        width: 120,
+                        buttons: [
+                            {
+                                hint: "Düzenle",
+                                icon: "edit",
+                                onClick: function(e) {
+                                    window.location.href = '/Purchase/UpdatePurchase/' + e.row.data.id;
+                                }
+                            },
+                            {
+                                hint: "Sil",
+                                icon: "trash",
+                                onClick: function(e) {
+                                    if (confirm("Bu alımı silmek istediğinizden emin misiniz?")) {
+                                        $.post('/Purchase/DeletePurchase', { id: e.row.data.id }, function() {
+                                            $("#purchaseGrid").dxDataGrid("instance").refresh();
+                                        });
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                onCellClick: function(e) {
+                    const rowData = e.row.data;
+                    if (!rowData) return;
+
+                    if (e.column.dataField === "price") {
+                        const newPrice = parseFloat(prompt("Yeni birim fiyatını girin:", rowData.price));
+                        if (isNaN(newPrice)) return;
+
+                        $.ajax({
+                            url: '/Purchase/UpdatePrice',
+                            type: 'POST',
+                            data: {
+                                id: rowData.id,
+                                price: newPrice
+                            },
+                            success: function(updated) {
+                                e.component.cellValue(e.row.rowIndex, "price", updated.price);
+                                e.component.cellValue(e.row.rowIndex, "amount", updated.amount);
+                                DevExpress.ui.notify("Fiyat ve tutar güncellendi.", "success", 1500);
+                            },
+                            error: function() {
+                                DevExpress.ui.notify("Güncelleme hatası!", "error", 2000);
+                            }
+                        });
+                    }
+                    else if (e.column.dataField === "quantity") {
+                        const newQty = parseFloat(prompt("Yeni miktarı girin:", rowData.quantity));
+                        if (isNaN(newQty)) return;
+
+                        $.ajax({
+                            url: '/Purchase/UpdateQuantity',
+                            type: 'POST',
+                            data: {
+                                id: rowData.id,
+                                quantity: newQty
+                            },
+                            success: function(updated) {
+                                e.component.cellValue(e.row.rowIndex, "quantity", updated.quantity);
+                                e.component.cellValue(e.row.rowIndex, "amount", updated.amount);
+                                DevExpress.ui.notify("Miktar ve tutar güncellendi.", "success", 1500);
+                            },
+                            error: function() {
+                                DevExpress.ui.notify("Güncelleme hatası!", "error", 2000);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+}

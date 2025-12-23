@@ -1,0 +1,86 @@
+﻿@{
+    ViewData["Title"] = "Ürünler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 class="mb-3">Ürün Listesi</h3>
+
+<a href="/Product/CreateProduct" class="btn btn-outline-info">Yeni Ürün</a>
+
+<div id="productGrid"></div>
+
+@section Scripts {
+    <script>
+        $(function () {
+
+            $("#productGrid").dxDataGrid({
+                dataSource: DevExpress.data.AspNet.createStore({
+                    key: "id",
+                    loadUrl: "/Product/GetProducts"
+                }),
+
+                showBorders: true,
+                rowAlternationEnabled: true,
+
+                paging: {
+                    pageSize: 10
+                },
+
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+
+                columns: [
+                    {
+                        dataField: "name",
+                        caption: "Ürün Adı"
+                    },
+                    {
+                        dataField: "category.name",
+                        caption: "Kategori",
+                        allowFiltering: true,
+                        allowSorting: true
+                    },
+                    {
+                        dataField: "salesprice",
+                        caption: "Satış Fiyatı",
+                        dataType: "number",
+                        format: {
+                            type: "currency",
+                            precision: 2
+                        }
+                    },
+                    {
+                        dataField: "src", // küçük harf
+                        caption: "Resim URL"
+                    },
+                    {
+                        caption: "Aksiyon",
+                        type: "buttons",
+                        width: 120,
+                        buttons: [
+                            {
+                                hint: "Düzenle",
+                                icon: "edit",
+                                onClick: function(e) {
+                                    window.location.href = '/Product/UpdateProduct/' + e.row.data.id;
+                                }
+                            },
+                            {
+                                hint: "Sil",
+                                icon: "trash",
+                                onClick: function(e) {
+                                    if (confirm("Bu ürünü silmek istediğinizden emin misiniz?")) {
+                                        $.post('/Product/DeleteProduct', { id: e.row.data.id }, function() {
+                                            $("#productGrid").dxDataGrid("instance").refresh();
+                                        });
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+
+        });
+    </script>
+}

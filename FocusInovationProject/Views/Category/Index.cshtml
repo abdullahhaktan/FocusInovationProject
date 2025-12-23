@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<a href="/Category/CreateCategory" class="btn btn-outline-info" ">Yeni Kategori</a>
+
+<br />
+
+<a href="/Category/CategorySalesReportView" class="btn btn-outline-info">Kategori Satış Raporu</a>
+
+<br />
+
+<h3 class="mb-3">Kategori Listesi</h3>
+
+
+<div id="categoryGrid"></div>
+
+@section Scripts {
+    <script>
+        $(function () {
+
+            $("#categoryGrid").dxDataGrid({
+                dataSource: DevExpress.data.AspNet.createStore({
+                    key: "id",
+                    loadUrl: "/Category/GetCategories"
+                }),
+
+                showBorders: true,
+                rowAlternationEnabled: true,
+
+                paging: {
+                    pageSize: 10
+                },
+
+                filterRow: { visible: true },
+                searchPanel: { visible: true },
+
+                columns: [
+                    {
+                        dataField: "name",
+                        caption: "Ürün Adı"
+                    },
+                    {
+                        dataField: "salesprice",
+                        caption: "Satış Fiyatı",
+                        dataType: "number",
+                        format: {
+                            type: "currency",
+                            precision: 2
+                        }
+                    }
+                ]
+            });
+
+        });
+    </script>
+}

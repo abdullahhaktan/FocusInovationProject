@@ -1,0 +1,44 @@
+﻿@model CreateProductDto
+
+@{
+    ViewData["Title"] = "Ürün Ekle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="card shadow border-0">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0">✏️ Yeni Ürün Ekle</h5>
+    </div>
+
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="NAME" class="form-label fw-semibold">Ürün Adı</label>
+                <input asp-for="NAME" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="IMAGE_SRC" class="form-label fw-semibold">Ürün Görsel URL</label>
+                <input asp-for="IMAGE_SRC" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="SALESPRICE" class="form-label fw-semibold">Ürün Satış Fiyatı</label>
+                <input asp-for="SALESPRICE" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CATEGORY_ID" class="form-label fw-semibold">Kategori</label>
+                  <select asp-for="CATEGORY_ID" class="form-control" asp-items="@ViewBag.categories"><option selected disabled>
+                      Kategori Seçiniz
+                  </option>
+                  </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save"></i> Kaydet
+            </button>
+        </form>
+    </div>
+</div>

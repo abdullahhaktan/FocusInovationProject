@@ -1,0 +1,129 @@
+﻿@{
+    ViewData["Title"] = "Kategorilere Göre Satış Raporu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="container-fluid">
+    <h3 class="mb-4 mt-2">Kategorilere Göre Satış Raporu</h3>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body bg-light">
+            <div class="row align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label font-weight-bold">Başlangıç Tarihi</label>
+                    <div id="startDateBox"></div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label font-weight-bold">Bitiş Tarihi</label>
+                    <div id="endDateBox"></div>
+                </div>
+                <div class="col-md-2">
+                    <div id="filterButton"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div id="categoryReportGrid"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            // 1. Tarih Seçicileri
+            var startDatePicker = $("#startDateBox").dxDateBox({
+                type: "date",
+                value: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+                displayFormat: "dd.MM.yyyy",
+                width: "100%"
+            }).dxDateBox("instance");
+
+            var endDatePicker = $("#endDateBox").dxDateBox({
+                type: "date",
+                value: new Date(),
+                displayFormat: "dd.MM.yyyy",
+                width: "100%"
+            }).dxDateBox("instance");
+
+            // 2. DataGrid Tanımı
+            var gridInstance = $("#categoryReportGrid").dxDataGrid({
+                dataSource: DevExpress.data.AspNet.createStore({
+                    key: "categoryName",
+                    loadUrl: "/Category/GetCategoryReportData",
+                    onBeforeSend: function(method, ajaxOptions) {
+                        var start = startDatePicker.option("value");
+                        var end = endDatePicker.option("value");
+
+                        if (start) ajaxOptions.data.startDate = start.toISOString();
+                        if (end) ajaxOptions.data.endDate = end.toISOString();
+                    }
+                }),
+                showBorders: true,
+                rowAlternationEnabled: true,
+                columnAutoWidth: true,
+                showRowLines: true,
+                loadPanel: { enabled: true },
+                searchPanel: { visible: true, width: 250, placeholder: "Kategori Ara..." },
+                // Filtre satırındaki o boş kutucukları tamamen kapatmak için:
+                filterRow: { visible: false },
+                headerFilter: { visible: false },
+                columns: [
+                    {
+                        dataField: "categoryName",
+                        caption: "Kategori Adı",
+                        sortOrder: "desc" // En yüksek cirolu en üstte
+                    },
+                    {
+                        dataField: "totalQuantity",
+                        caption: "Satılan Adet",
+                        dataType: "number",
+                        alignment: "right",
+                        format: {
+                            type: "fixedPoint",
+                            precision: 0 // Tam sayı gösterimi
+                        }
+                    },
+                    {
+                        dataField: "totalAmount",
+                        caption: "Toplam Ciro",
+                        dataType: "number",
+                        alignment: "right",
+                        format: {
+                            type: "currency",
+                            currency: "TRY",
+                            precision: 2
+                        }
+                    }
+                ],
+                summary: {
+                    totalItems: [{
+                        column: "totalAmount",
+                        summaryType: "sum",
+                        valueFormat: {
+                            type: "currency",
+                            currency: "TRY",
+                            precision: 2
+                        },
+                        displayFormat: "Genel Toplam: {0}"
+                    }]
+                }
+            }).dxDataGrid("instance");
+
+            // 3. Filtreleme Butonu
+            $("#filterButton").dxButton({
+                text: "Raporu Getir",
+                type: "default",
+                icon: "refresh",
+                width: "100%",
+                onClick: function() {
+                    gridInstance.refresh();
+                }
+            });
+        });
+    </script>
+}
