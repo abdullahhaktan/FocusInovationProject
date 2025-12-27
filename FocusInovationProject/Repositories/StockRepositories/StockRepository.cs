@@ -95,6 +95,7 @@ namespace FocusInovationProject.Repositories.StockRepositories
             var stock = await _db.FirstOrDefaultAsync(s => s.PRODUCT_ID == productId);
             if (stock == null) return;
 
+
             stock.QUANTITY += quantityChange;
 
             await _context.SaveChangesAsync();
