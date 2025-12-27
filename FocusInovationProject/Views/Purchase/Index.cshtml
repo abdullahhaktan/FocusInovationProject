@@ -9,8 +9,6 @@
 
 <div id="purchaseGrid"></div>
 
-
-
 @section Scripts {
     <script>
         $(function () {
@@ -107,28 +105,7 @@
                                 DevExpress.ui.notify("Güncelleme hatası!", "error", 2000);
                             }
                         });
-                    }
-                    else if (e.column.dataField === "quantity") {
-                        const newQty = parseFloat(prompt("Yeni miktarı girin:", rowData.quantity));
-                        if (isNaN(newQty)) return;
-
-                        $.ajax({
-                            url: '/Purchase/UpdateQuantity',
-                            type: 'POST',
-                            data: {
-                                id: rowData.id,
-                                quantity: newQty
-                            },
-                            success: function(updated) {
-                                e.component.cellValue(e.row.rowIndex, "quantity", updated.quantity);
-                                e.component.cellValue(e.row.rowIndex, "amount", updated.amount);
-                                DevExpress.ui.notify("Miktar ve tutar güncellendi.", "success", 1500);
-                            },
-                            error: function() {
-                                DevExpress.ui.notify("Güncelleme hatası!", "error", 2000);
-                            }
-                        });
-                    }
+                    }                 
                 }
             });
         });

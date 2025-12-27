@@ -55,6 +55,11 @@ namespace FocusInovationProject.Repositories.SaleRepositories
                                 .AsNoTracking()
                                 .ToListAsync();
 
+            foreach(var value in values)
+            {
+                value.DISCOUNTRATE = ((value.LISTPRICE - value.SALESPRICE) / value.LISTPRICE) * 100;
+            }
+
             var products = _mapper.Map<List<ResultSaleDto>>(values);
             return products;
         }

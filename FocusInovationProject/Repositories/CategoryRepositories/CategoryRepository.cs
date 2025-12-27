@@ -21,7 +21,7 @@ namespace FocusInovationProject.Repositories.CategoryRepositories
             if (!startDate.HasValue || !endDate.HasValue)
                 return new List<CategorySalesReportDto>();
 
-            // Satış tablosu üzerinden ürün ve kategori bilgilerini birleştirerek (Join) ham veriyi çekiyoruz
+            // Satış tablosu üzerinden ürün ve kategori bilgilerini birleştirerek (Join) ham veriyi çekiyoruz (eager loading)
             var rawData = _context.Sales
                 .Include(s => s.PRODUCT)
                 .ThenInclude(p => p.CATEGORY)
@@ -40,8 +40,8 @@ namespace FocusInovationProject.Repositories.CategoryRepositories
                 .Select(g => new CategorySalesReportDto
                 {
                     CategoryName = g.Key,
-                    TotalQuantity = (double)g.Sum(x => x.Qty),
-                    TotalAmount = (double)g.Sum(x => (decimal)x.Qty * (decimal)x.Price)
+                    TotalQuantity = g.Sum(x => x.Qty),
+                    TotalAmount = g.Sum(x => x.Qty * x.Price)
                 })
                 .OrderByDescending(x => x.TotalAmount) // Ciroya göre en yüksekten düşüğe sıralama
                 .ToList();

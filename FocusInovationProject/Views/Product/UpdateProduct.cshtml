@@ -13,6 +13,9 @@
     <div class="card-body">
         <form method="post">
             <div class="mb-3">
+
+                <input type="hidden" asp-for="ID" />
+
                 <label asp-for="NAME" class="form-label fw-semibold">Ürün Adı</label>
                 <input asp-for="NAME" class="form-control" />
             </div>

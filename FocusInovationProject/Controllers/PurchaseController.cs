@@ -71,7 +71,7 @@ namespace FocusInovationProject.Controllers
         [HttpGet]
         public async Task<IActionResult> CreatePurchase()
         {
-            // Form render edilmeden önce gerekli lookup listelerini asenkron dolduruyoruz
+            // Products ve customerları viewbag yardımıyla taşıma
             await GetProducts();
             await GetCustomers();
 
@@ -81,7 +81,7 @@ namespace FocusInovationProject.Controllers
         [HttpPost]
         public async Task<IActionResult> CreatePurchase(CreatePurchaseDto purchaseDto)
         {
-            // Validasyon hatası durumunda UI elementlerinin boş gelmemesi için listeleri tekrar yüklüyoruz
+            // Products ve customerları viewbag yardımıyla taşıma
             await GetProducts();
             await GetCustomers();
 
@@ -105,6 +105,7 @@ namespace FocusInovationProject.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdatePurchase(int id)
         {
+            // Products ve customerları viewbag yardımıyla taşıma
             await GetProducts();
             await GetCustomers();
 

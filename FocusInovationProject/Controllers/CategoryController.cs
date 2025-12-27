@@ -11,13 +11,11 @@ namespace FocusInovationProject.Controllers
     public class CategoryController : Controller
     {
         private readonly ICategoryRepository _categoryRepository;
-        private readonly ISaleRepository _saleRepository;
 
         // Repository'leri içeri alarak veritabanı işlemlerini bu servisler üzerinden yürütüyoruz
         public CategoryController(ICategoryRepository categoryRepository, ISaleRepository saleRepository)
         {
             _categoryRepository = categoryRepository;
-            _saleRepository = saleRepository;
         }
 
         // Kategori listeleme sayfasını açar
