@@ -130,7 +130,7 @@ namespace FocusInovationProject.Controllers
             double discountRate = sale.DISCOUNTRATE;
             double salesPrice = sale.SALESPRICE ?? 0;
 
-            // Tersine matematiksel işlemle indirimden önceki liste fiyatını hesaplıyoruz
+            // Matematiksel olarak yeni listprice hesaplama (tersine mühendislik)
             double calculated = salesPrice;
             if (discountRate > 0 && discountRate < 100)
                 calculated = salesPrice / (1 - (discountRate / 100.0));
@@ -147,7 +147,7 @@ namespace FocusInovationProject.Controllers
             var sale = await _saleRepository.GetByIdAsync(id);
             if (sale == null) return NotFound();
 
-            // Sadece satış fiyatını güncelleyip indirim oranının repo seviyesinde yeniden hesaplanmasını tetikliyoruz
+            // Satış Fiyatını Güncelleme
             await _saleRepository.UpdateSalesPriceAsync(id, salesPrice);
 
             // UI tarafında anlık değişimleri göstermek için güncel entity durumunu dönüyoruz
