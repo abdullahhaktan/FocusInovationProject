@@ -1,4 +1,4 @@
-// using kýsýmlarý
+// using kÃ½sÃ½mlarÃ½
 using FocusInovationProject.Context;
 using FocusInovationProject.Mappings;
 using FocusInovationProject.Repositories.CategoryRepositories;
@@ -25,12 +25,12 @@ builder.Services.AddControllersWithViews()
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.WriteIndented = true;
-        // Döngüyü engellememek için ayar
+        // DÃ¶ngÃ¼yÃ¼ engellememek iÃ§in ayar
     });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")); // Sql Connection ConnectedService adlý gizli yerden çekildi 
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")); // Sql Connection ConnectedService adlÄ± gizli yerden Ã§ekildi 
 });
 
 

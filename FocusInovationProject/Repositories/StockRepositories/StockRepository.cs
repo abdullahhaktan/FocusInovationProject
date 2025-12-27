@@ -58,7 +58,7 @@ namespace FocusInovationProject.Repositories.StockRepositories
 
         public async Task<IEnumerable<ResultStockDto>> GetStocksWithProduct()
         {
-            // Stokları listelerken ürün detaylarını da beraberinde getiriyoruz (Join işlemi)
+            // Stokları listelerken ürün detaylarını da beraberinde getiriyoruz (Join işlemi) fakat listeleme işleminde trackinge gerek olmadığı için AsNoTracking ekledik
             var values = await _db.Include(s => s.PRODUCT).AsNoTracking().ToListAsync();
             var stocks = _mapper.Map<List<ResultStockDto>>(values);
             return stocks;
