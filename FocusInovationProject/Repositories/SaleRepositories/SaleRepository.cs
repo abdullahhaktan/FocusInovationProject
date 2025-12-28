@@ -117,7 +117,7 @@ namespace FocusInovationProject.Repositories.SaleRepositories
 
             sale.DISCOUNTRATE = discountRate ?? 0;
 
-            // Hesaplanan yeni değerleri kaydediyoruz
+            // Hesaplanan yeni değerleri kaydediyoruzzz
             await _context.SaveChangesAsync();
         }
     }

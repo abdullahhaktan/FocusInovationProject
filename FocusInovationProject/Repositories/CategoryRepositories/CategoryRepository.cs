@@ -17,62 +17,40 @@ namespace FocusInovationProject.Repositories.CategoryRepositories
 
         public List<CategorySalesReportDto> GetCategorySalesReport(DateTime? startDate, DateTime? endDate)
         {
-            // Tarih aralığı boş gelirse boş liste dönerek uygulamanın kırılmasını engelliyoruz
             if (!startDate.HasValue || !endDate.HasValue)
                 return new List<CategorySalesReportDto>();
 
-            // Satış tablosu üzerinden ürün ve kategori bilgilerini birleştirerek (Join) ham veriyi çekiyoruz (eager loading)
-            var rawData = _context.Sales
-                .Include(s => s.PRODUCT)
-                .ThenInclude(p => p.CATEGORY)
+            var result = _context.Sales
                 .Where(s => s.DATE >= startDate && s.DATE <= endDate)
-                .Select(s => new
-                {
-                    CategoryName = s.PRODUCT.CATEGORY.NAME,
-                    Qty = s.QUANTITY ?? 0, // Miktar null gelirse 0 olarak işleme al
-                    Price = s.SALESPRICE ?? 0 // Satış fiyatı null gelirse 0 olarak işleme al
-                })
-                .ToList(); // Gruplama işlemi öncesi veriyi belleğe alıyoruz
-
-            // Bellekteki veriyi kategori bazlı gruplayıp toplam tutar ve miktarları hesaplıyoruz
-            var result = rawData
-                .GroupBy(x => x.CategoryName)
+                .GroupBy(s => s.PRODUCT.CATEGORY.NAME)
                 .Select(g => new CategorySalesReportDto
                 {
                     CategoryName = g.Key,
-                    TotalQuantity = g.Sum(x => x.Qty),
-                    TotalAmount = g.Sum(x => x.Qty * x.Price)
+                    TotalQuantity = g.Sum(x => x.QUANTITY ?? 0),
+                    TotalAmount = g.Sum(x => (x.QUANTITY ?? 0) * (x.SALESPRICE ?? 0))
                 })
-                .OrderByDescending(x => x.TotalAmount) // Ciroya göre en yüksekten düşüğe sıralama
+                .OrderByDescending(x => x.TotalAmount)
                 .ToList();
 
             return result;
         }
+
 
         public List<StockReportDto> GetStockReport()
         {
-            // Mevcut stok durumunu ürün isimleriyle birlikte sorguluyoruz
-            var rawStocks = _context.Stock
-                .Select(s => new
-                {
-                    ProductName = s.PRODUCT.NAME,
-                    Quantity = s.QUANTITY
-                })
-                .ToList();
-
-            // Aynı ürün ismine sahip kayıtları birleştirerek toplam stok miktarını buluyoruz
-            var result = rawStocks
-                .GroupBy(x => x.ProductName)
+            var result = _context.Stock
+                .GroupBy(s => s.PRODUCT.NAME)
                 .Select(g => new StockReportDto
                 {
                     ProductName = g.Key,
-                    TotalStock = (double)g.Sum(x => x.Quantity)
+                    TotalStock = g.Sum(x => x.QUANTITY)
                 })
-                .OrderByDescending(x => x.TotalStock) // Stoğu en fazla olandan başlayarak listele
+                .OrderByDescending(x => x.TotalStock)
                 .ToList();
 
             return result;
         }
+
 
         public async Task CreateAsync(CreateCategoryDto categoryDto)
         {
