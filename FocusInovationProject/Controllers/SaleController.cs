@@ -80,6 +80,10 @@ namespace FocusInovationProject.Controllers
             await GetCustomers();
             await GetProducts();
 
+            var discountrate = ((saleDto.LISTPRICE - saleDto.SALESPRICE) / (saleDto.LISTPRICE)) * 100;
+
+            saleDto.DISCOUNTRATE = discountrate ?? 0;
+
             // Satış kaydını ana tabloya işliyoruz
             await _saleRepository.CreateAsync(saleDto);
 

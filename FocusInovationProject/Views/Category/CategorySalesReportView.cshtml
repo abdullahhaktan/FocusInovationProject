@@ -11,12 +11,12 @@
         <div class="card-body bg-light">
             <div class="row align-items-end">
                 <div class="col-md-3">
-                    <label class="form-label font-weight-bold">Başlangıç Tarihi</label>
+                    <label style="color:black" class="form-label font-weight-bold">Başlangıç Tarihiii</label>
                     <div id="startDateBox"></div>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label font-weight-bold">Bitiş Tarihi</label>
-                    <div id="endDateBox"></div>
+                    <label style="color:black" class="form-label font-weight-bold">Bitiş Tarihiii</label>
+                    <div style="color:black" id="endDateBox"></div>
                 </div>
                 <div class="col-md-2">
                     <div id="filterButton"></div>
@@ -40,14 +40,16 @@
                 type: "date",
                 value: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
                 displayFormat: "dd.MM.yyyy",
-                width: "100%"
+                width: "100%",
+                inputAttr: { style: "color:black;" }
             }).dxDateBox("instance");
 
             var endDatePicker = $("#endDateBox").dxDateBox({
                 type: "date",
                 value: new Date(),
                 displayFormat: "dd.MM.yyyy",
-                width: "100%"
+                width: "100%",
+                inputAttr: { style: "color:black;" }
             }).dxDateBox("instance");
 
             // 2. DataGrid Tanımı
